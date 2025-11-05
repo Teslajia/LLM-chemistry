@@ -1,26 +1,34 @@
 from modelscope import AutoModelForCausalLM, AutoTokenizer
 import torch
-# Load model and tokenizer
-model_name = "iflytek/Spark-Chemistry-X1-13B"
-tokenizer = AutoTokenizer.from_pretrained(model_name,trust_remote_code=True)
+
+# 替换为你移动后的模型本地路径（必须是完整路径）
+model_path = "/opt/data/private/Tesla/model-13B/Spark-Chemistry-X1-13B/"  # 请确认路径正确
+
+# 加载分词器（指定本地路径）
+tokenizer = AutoTokenizer.from_pretrained(
+    model_path,  # 用本地路径替代模型名称
+    trust_remote_code=True
+)
+
+# 加载模型（指定本地路径）
 model = AutoModelForCausalLM.from_pretrained(
-    model_name,
+    model_path,  # 用本地路径替代模型名称
     torch_dtype=torch.float32,
     device_map="auto",
     trust_remote_code=True
 )
-# Deliberative
+
+# 后续代码不变...
 chat_history = [
   {
     "role" : "system",
     "content" : "请你先深入剖析给出问题的关键要点与内在逻辑,生成思考过程,再根据思考过程回答给出问题。思考过程以<unused6>开头,在结尾处用<unused7>标注结束,<unused7>后为基于思考过程的回答内容"
-  }
-  ,
+  },
   {
     "role" : "user",
     "content" : "请回答下列问题:高分子材料是否具有柔顺性主要决定于()的运动能力。\nA、主链链节\nB、侧基\nC、侧基内的官能团或原子?"
-  }]
-
+  }
+]
 
 inputs = tokenizer.apply_chat_template(
     chat_history,
